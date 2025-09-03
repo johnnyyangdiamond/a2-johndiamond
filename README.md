@@ -1,72 +1,53 @@
-Assignment 2 - Short Stack: Basic Two-tier Web Application using HTML/CSS/JS and Node.js  
-===
+John Diamond 
+https://a2-johndiamond.onrender.com
 
-Due: Monday, September 8, 2025, by 11:59 PM.
-
-This assignment aims to introduce you to creating a prototype two-tiered web application. 
-Your application will include the use of HTML, CSS, JavaScript, and Node.js functionality, with active communication between the client and the server over the life of a user session.
+This project allows users to enter tasks with a specifed times which will be displayed on the page in a list format in order of how close the time is to the current time. Users can also edit and delete specific tasks.
 
 Baseline Requirements
 ---
 
-There is a large range of application areas and possibilities that meet these baseline requirements. 
-Try to make your application do something useful! A todo list, storing / retrieving high scores for a very simple game... have a little fun with it.
 
-Your application is required to implement the following functionalities (4 pts each, total 20 pts):
+- `Server`: maintains a tabular dataset with fields.**task_input**, **time_input**, **task_id**, and **priority**.
+- `Results`: this inputted tasks with the information **Task Name**, **Time**, and **Priority** are displayed in a table format on the page.
+- `Form/Entry`: Users input the task name and time and click the 'Add Task' button to display the information on the table. 
+- `Server Logic`: After receiving the task name and time from the user, the server calculates the **priority** field based on how close the task is to the current time as well as sorts them in ascending order based on time.
+- `Derived field`: the field **priority** is calculated based on how close the task is to the current time with options **Low**, **Medium**, **High**, and **Expired**.
 
-- a `Server` which not only serves files, but also maintains a tabular dataset with 3 or more fields related to your application
-- a `Results` functionality which shows the entire dataset residing in the server's memory
-- a `Form/Entry` functionality which allows a user to add or delete data items residing in the server's memory
-- a `Server Logic` which, upon receiving new or modified "incoming" data, includes and uses a function that adds at least one additional derived field to this incoming data before integrating it with the existing dataset
-- the `Derived field` for a new row of data must be computed based on fields already existing in the row. 
-For example, a `todo` dataset with `task`, `priority`, and `creation_date` may generate a new field `deadline` by looking at `creation_date` and `priority`
 
-Your application is required to demonstrate the use of the following concepts:
-
-HTML (4 pts each, total 16 pts):
-- One or more [HTML Forms](https://developer.mozilla.org/en-US/docs/Learn/HTML/Forms), with any combination of form tags appropriate for the user input portion of the application
-- A results page displaying all data currently available on the server. You will most likely use a `<table>` tag for this, but `<ul>` or `<ol>` could also work and might be simpler to work with. Alternatively, you can create a single-page app (see Technical Acheivements) but this is not a requirement.
-- All pages should [validate](https://validator.w3.org)
-- If your app contains multple pages, they should all be accessible from the homepage (index.html)
-
-CSS (4 pts each, total 16 pts):
-- CSS styling of the primary visual elements in the application
-- Various CSS Selector functionality must be demonstrated:
-    - Element selectors
-    - ID selectors
-    - Class selectors
-- CSS positioning and styling of the primary visual elements in the application:
-    - Use of either a CSS grid or flexbox for layout
-    - Rules defining fonts for all text used; no default fonts! Be sure to use a web safe font or a font from a web service like [Google Fonts](http://fonts.google.com/)
-- CSS defined in a maintainable, readable form, in external stylesheets 
-
-JavaScript (4 pts):
-- At minimum, a small amount of front-end JavaScript to get / fetch data from the server; a sample is provided in this repository.
-
-Node.js (4 pts):
-- An HTTP Server that delivers all necessary files and data for the application, and also creates the required `Derived Fields` in your data. 
-A starting point is provided in this repository.
-
-Deliverables
+HTML Requirements:
 ---
 
-1. (5 pts) Fork the starting project code repo. The starter code in the repo may be used or discarded as needed.
-2. (60 pts, detailed above) Implement your project with the above requirements.
-3. Test your project to make sure that when someone goes to your main page, it displays correctly.
-4. (5 pts) Deploy your project to Render (or your hosting service of choice), and fill in the appropriate fields in your package.json file.
-5. (5 pts) Ensure that your project at least starts with the proper naming scheme `a2-FirstnameLastname` so we can find it.
-6. (5 pts) Modify the README to the specifications below, and delete all of the instructions originally found in this README.
-7. (5 pts) Create and submit a Pull Request to the original repo. Be sure to include your name in the pull request.
+- Users specify the task through `<input>` elements, one of type **text** and one of type **time**. The user then submits the task by clicking the `<button>` element 'Add Task'.
+- The results are displayed in a `<table>` element with a `<th>` (table header) specifying columns **Task Name**, **Time**, and **Priority**. All tasks specified by users appear as `<tr>` (table rows) in the table.
+- The pages is [validated](https://validator.w3.org)
+
+CSS Requirements:
+---
+
+- CSS Selector styling:
+    - Element selectors - `h1`, `body`, `button`
+    - ID selectors - `#task-form`, `#form-description`, `#task-list`
+    - Class selectors - `.task-table`, `.task-header`, 
+- CSS positioning and styling of the primary visual elements in the application:
+    - Use of either a CSS grid for layout - `#task-form`
+    - Font used for all text - IBM Plex Sans
+- CSS defined `main.css` 
+
+JavaScript:
+- `main.js` submits POST requests to the server `server.improved.js` whenever a user submits a new task, edits the time of an existing class, or deletes a task to update changes to the data stored in the server. It also submits a GET request every minute to update the **Priority** column of each task.
+
+Node.js:
+- The server `server.improved.js` calculates the priority of each task every minute, organizes the tasks in ascending order, and also ensures there are no duplicate tasks with the same name and time.
+
 
 Acheivements
 ---
 
-Below are suggested technical and design achievements. You can use these to help customize the assignment to your personal interests. These are recommended acheivements, but feel free to create/implement your own... just make sure you thoroughly describe what you did in your README and why it was challenging. ALL ACHIEVEMENTS MUST BE DESCRIBED IN YOUR README IN ORDER TO GET CREDIT FOR THEM. Remember, the highest grade you can get on any individual assignment is a 100%.
 
 *Technical*
-- (5 points) Create a single-page app that both provides a form for users to submit data and always shows the current state of the server-side data. To put it another way, when the user submits data, the server should respond sending back the updated data (including the derived field calculated on the server) and the client should then update its data display.
+- As stated above, users can input a task name and task time to be displayed in a table below with a column called `Priority` calculated during runtime. If a user modifies the time, the page will automatically update the order of the tasks displayed in ascending order as well as the Priority of that specifc task. The page is updated every minute so update the Priority column as tasks get closer to their deadline.
 
-- (5 points) In addition to a form enabling adding and deleting data on the server, also add the ability to modify existing data.
+- The User can modify the task name and task time by simply clicking on the text of either and modifying it directly. Users can not edit the priority because it is updated automatically if the time of the task is modified. Additionally, if the user hovers over a row in the table, a delete button pops up on the right hand side of that specifc row which a user can click on to delete the task.
 
 *Design/UX*
 - (5 points per person, with a max of 10 points) Test your user interface with other students in the class. Define a specific task for them to complete (ideally something short that takes <10 minutes), and then use the [think-aloud protocol](https://en.wikipedia.org/wiki/Think_aloud_protocol) to obtain feedback on your design (talk-aloud is also fine). Important considerations when designing your study:
@@ -84,33 +65,3 @@ You'll need to use sometype of collaborative software that will enable you both 
 
 *You do not need to actually make changes based on their feedback*. This acheivement is designed to help gain experience testing user interfaces. If you run two user studies, you should answer two sets of questions. 
 
-FAQ
----
-**Q: Can I use frameworks for this assignment?**
-
-A: No. We'll discuss them later this term, but for right now, we want to see that you can implement these features yourself instead of outsourcing them to an existing framework or library.
-
-**Q: After I delete some data server-side, the data persists on the client side until I refresh the page.**
-
-A: Make sure the client-side copy of the data also reflects the deletion. The server-side and client-side copies of the data should remain in sync at all times.
-
-**Q: Do I have to implement the specific achievements above?**
-
-A: No. As discussed in the instructions, you are free to implement your own. If you're not sure if they'll qualify, check with the instructor.
-
-**Q: If I do a single page for the technical achievement, will I still get credit for the last two criteria in the base requirements?**
-
-Yes.
-
-
-Sample Readme (delete the above when you're ready to submit, and modify the below so with your links and descriptions)
----
-
-## Your Web Application Title
-Include a very brief summary of your project here. Be sure to include the CSS positioning technique you used, and any required instructions to use your application.
-
-## Technical Achievements
-- **Tech Achievement 1**: Using a combination of...
-
-### Design/Evaluation Achievements
-- **Design Achievement 1**: 

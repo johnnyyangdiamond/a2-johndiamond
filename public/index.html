@@ -1,18 +1,36 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
   <head>
-    <title>CS4241 Assignment 2</title>
-    <meta charset="utf-8">
+    <title>Daily Task Page</title>
+    <meta charset="utf-8" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,100..700;1,100..700&display=swap" rel="stylesheet">
     <script src="js/main.js"></script>
-    <link rel="stylesheet" href="css/main.css">
-    
+    <link rel="stylesheet" type="text/css" href="css/main.css" />
+
     <!-- get rid of favicon error -->
-    <link rel="icon" href="data:;base64,iVBORw0KGgo=">
+    <link rel="icon" href="data:;base64,iVBORw0KGgo=" />
   </head>
   <body>
-    <form>
-      <input type="text" id="yourname" value="your name here">
-      <button>submit</button>
-    </form>
+    <h1>Daily Tasks</h1>
+
+    <div id="form-description">
+      <p>
+        Enter your daily tasks along with a time, and they will appear below.
+        Delete each one that you complete!
+      </p>
+
+      <form id="task-form">
+        <input type="text" id="task-name" placeholder="Task name" required />
+        <input type="time" id="task-time" required />
+        <button type="submit">Add Task</button>
+      </form>
+    </div>
+
+    <div id="task-list">
+      <!-- Tasks will be dynamically added here -->
+
+    </div>
   </body>
 </html>
