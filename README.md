@@ -1,6 +1,8 @@
 John Diamond 
 https://a2-johndiamond.onrender.com
 
+**Note**: Render service is hosting in Oregon so the Priority field will be off by a few hours.
+
 This project allows users to enter tasks with a specifed times which will be displayed on the page in a list format in order of how close the time is to the current time. Users can also edit and delete specific tasks.
 
 Baseline Requirements
@@ -65,3 +67,19 @@ You'll need to use sometype of collaborative software that will enable you both 
 
 *You do not need to actually make changes based on their feedback*. This acheivement is designed to help gain experience testing user interfaces. If you run two user studies, you should answer two sets of questions. 
 
+
+
+AI Usage
+---
+
+Used ChatGPT with the following prompts:
+- How to add `<li>` components to an HTML page dynamically after a button is clicked
+- How to create a javascript function called when a user edits content in a table element
+- How would I add a new category to the JSON on the server side?
+- How would I use grid on the table to make one column longer than the others?
+- How would I make the text in the table editable?
+- How would I create a regex experssion to make sure a user enters time in format HH:MM
+- How to add an event listener to a speciifc column in a table
+- how to create a function to submit a post request to a server
+- how to add an id to an element like classList.add
+- How to create a button that only appears when hovering over an element
