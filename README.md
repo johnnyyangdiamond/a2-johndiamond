@@ -52,21 +52,18 @@ Acheivements
 - The User can modify the task name and task time by simply clicking on the text of either and modifying it directly. Users can not edit the priority because it is updated automatically if the time of the task is modified. Additionally, if the user hovers over a row in the table, a delete button pops up on the right hand side of that specifc row which a user can click on to delete the task.
 
 *Design/UX*
-- (5 points per person, with a max of 10 points) Test your user interface with other students in the class. Define a specific task for them to complete (ideally something short that takes <10 minutes), and then use the [think-aloud protocol](https://en.wikipedia.org/wiki/Think_aloud_protocol) to obtain feedback on your design (talk-aloud is also fine). Important considerations when designing your study:
 
-1. Make sure you start the study by clearly stating the task that you expect your user to accomplish.
-2. You shouldn't provide any verbal instructions on how to use your interface / accomplish the task you give them. Make sure that your interface is clear enough that users can figure it out without any instruction, or provide text instructions from within the interface itself. 
-3. If users get stuck to the point where they give up, you can then provde instruction so that the study can continue, but make sure to discuss this in your README. You won't lose any points for this... all feedback is good feedback!
+Design Evaluation 1:
+1. Theo Sawyer
+2. There is nothing on the page that indicates you can edit the values  in each task
+3. I should use AM and PM instead of military time
+4. Add more elements to guide the user on how to use the application
 
-You'll need to use sometype of collaborative software that will enable you both to see the test subject's screen and listen to their voice as they describe their thoughts, or conduct the studies in person. After completing each study, briefly (one to two sentences for each question) address the following in your README:
-
-1. Provide the last name of each student you conduct the evaluation with.
-2. What problems did the user have with your design?
-3. What comments did they make that surprised you?
-4. What would you change about the interface based on their feedback?
-
-*You do not need to actually make changes based on their feedback*. This acheivement is designed to help gain experience testing user interfaces. If you run two user studies, you should answer two sets of questions. 
-
+Design Evaluation 2:
+1. Aanan Goyal
+2. The table headers should be present on the page even if there are no tasks under
+3. He typed in an extremely long task which modified the length of the columns in the table that I did not expect.
+4. Modify the table headers so they appear even if no tasks have been entered
 
 
 AI Usage
