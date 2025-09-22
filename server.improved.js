@@ -13,7 +13,7 @@ const dir = "public";
 app.use('/bootstrap', express.static(path.join(__dirname, 'node_modules/bootstrap/dist')));
 
 app.use(session({
-  secret: "secret-key",
+  secret: process.env.SESSION_SECRET,
   resave: false,     // don't resave if session unchanged
   saveUninitialized: true   // save new but unmodified sessions
 }));
@@ -27,7 +27,7 @@ passport.use(new Auth0Strategy(
     domain: process.env.AUTH0_DOMAIN,
     clientID: process.env.AUTH0_CLIENT_ID,
     clientSecret: process.env.AUTH0_CLIENT_SECRET,
-    callbackURL: "https://a3-johndiamond.vercel.app/callback"
+    callbackURL: process.env.AUTH0_CALLBACK
   },
   // Runs after login succeeds and saves user object in session
   function(accessToken, refreshToken, extraParams, profile, done){
@@ -62,7 +62,7 @@ app.get("/logout", (req, res) => {
   req.logout(() => {
     req.session.destroy(() => {
       res.redirect(
-      `https://${process.env.AUTH0_DOMAIN}/v2/logout?client_id=${process.env.AUTH0_CLIENT_ID}&returnTo=https://a3-johndiamond.vercel.app/`
+      `https://${process.env.AUTH0_DOMAIN}/v2/logout?client_id=${process.env.AUTH0_CLIENT_ID}&returnTo=${process.env.AUTH0_ORIGIN}`
       );
     });
   });
