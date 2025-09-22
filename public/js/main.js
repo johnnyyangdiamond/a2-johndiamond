@@ -1,7 +1,5 @@
 // FRONT-END (CLIENT) JAVASCRIPT HERE
 
-let counter = 0; // Global counter variable to assign unique IDs to tasks
-
 const handleTimeEdit = async function(taskId, newTime, originalTime) {
   // Check if the new time is valid
   if (!newTime || !/^([01]\d|2[0-3]):([0-5]\d)$/.test(newTime)) {
@@ -36,24 +34,9 @@ const handleTimeEdit = async function(taskId, newTime, originalTime) {
 }
 
 const updateTaskList = function(serverResponse) {
-  const taskList = document.querySelector("#task-list");
-  taskList.innerHTML = ""; // Clear the current list
+  const taskList = document.querySelector("#task-list"); // tbody
+  taskList.innerHTML = ""; // Clear existing rows
 
-  // Create a table
-  const table = document.createElement("table");
-  table.classList.add("task-table"); 
-
-  // Create table header
-  const headerRow = document.createElement("tr");
-  ["Task Name", "Time", "Priority"].forEach(headerText => {
-    const th = document.createElement("th"); 
-    th.textContent = headerText;
-    th.classList.add("task-header"); // Add class for styling
-    headerRow.appendChild(th);
-  });
-  table.appendChild(headerRow);
-
-  // Populate the table with tasks
   serverResponse.forEach(task => {
     const row = document.createElement("tr");
     row.classList.add("task-row");
@@ -62,7 +45,7 @@ const updateTaskList = function(serverResponse) {
       const td = document.createElement("td");
       td.textContent = cellText;
 
-      // Add class based on priority for styling
+      // Add priority styling
       if (cellText === "High") {
         td.classList.add("high-priority");
       } else if (cellText === "Medium") {
@@ -71,36 +54,36 @@ const updateTaskList = function(serverResponse) {
         td.classList.add("low-priority");
       } else if (cellText === "Expired") {
         td.classList.add("expired-priority");
-      }
-      else{
-        td.setAttribute("contenteditable", "true"); // Make the cell editable
+      } else {
+        td.setAttribute("contenteditable", "true"); // Make editable
 
-        if (colIndex == 1){ // Only add listener for time_input column
-          td.id = `id-${task.task_id}`;
+        if (colIndex === 1) { // Time column only
+          td.id = `id-${task.id}`;
           td.addEventListener("blur", async function() {
-            handleTimeEdit(task.task_id, td.textContent, task.time_input);
+            handleTimeEdit(task.id, td.textContent, task.time_input);
           });
         }
       }
 
-      td.classList.add("task-cell"); // Add class for styling
+      td.classList.add("task-cell");
+
+      // If this is the Priority column → add Delete button
+      if (colIndex === 2) {
+        const deleteButton = document.createElement("button");
+        deleteButton.textContent = "Delete";
+        deleteButton.classList.add("btn", "btn-danger", "btn-sm", "delete-button");
+        deleteButton.addEventListener("click", () => handleDeleteTask(task.id));
+        td.appendChild(deleteButton);
+      }
+
       row.appendChild(td);
     });
 
-    // Add delete button
-    const deleteButton = document.createElement("button");
-    deleteButton.textContent = "Delete";
-    deleteButton.classList.add("delete-button");
-    deleteButton.classList.add("task-row");
-    deleteButton.addEventListener("click", () => handleDeleteTask(task.task_id));
-    row.appendChild(deleteButton);
-
-    table.appendChild(row);
+    taskList.appendChild(row);
   });
-
-  // Append the table to the task list container
-  taskList.appendChild(table);
 };
+
+
 
 const handleDeleteTask = async function(taskId) {
   try {
@@ -125,14 +108,23 @@ const submit = async function(event) {
   // a new .html page for displaying results...
   // this was the original browser behavior and still
   // remains to this day
-  event.preventDefault()  // prevents page reload when form submitted
+  event.preventDefault();  // prevents page reload when form submitted
   
+  const form = document.querySelector("#task-form");
+
+  if (!form.checkValidity()) {
+    alert("Both Task Name and Time are required.");
+    return; 
+  }
+
   // Takes the input and converts to JSON
   const task_input = document.querySelector( "#task-name" ), 
       time_input = document.querySelector( "#task-time" ), 
-      json = { task_input: task_input.value, time_input: time_input.value, task_id: counter++ },
+      json = { task_input: task_input.value, time_input: time_input.value },
       body = JSON.stringify( json )
 
+  console.log(body);
+    
   try {
     // Sends the JSON to the server using fetch() and processes the response
     const response = await fetch("/submit", {
@@ -177,11 +169,28 @@ refreshTaskList = function() {
   }, 60000); // Refresh every 60 seconds
 };
 
+async function fetchTasks() {
+  try {
+    const response = await fetch("/tasks", {
+      method: "GET",
+      headers: { "Content-Type": "application/json" }
+    });
+
+    const serverResponse = await response.json();
+    console.log("Initial tasks from server:", serverResponse);
+
+    updateTaskList(serverResponse);
+  } catch (error) {
+    console.error("Error fetching tasks:", error);
+  }
+}
+
 
 // Sets up the event listener for the submit button
 window.onload = function() {
-    const button = document.querySelector("button");
+    const button = document.querySelector("#addTask");
   button.onclick = submit;
 
+  fetchTasks();
   refreshTaskList(); // Start periodic refresh
 }

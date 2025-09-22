@@ -1,150 +1,265 @@
-const http = require( "http" ),
-      fs   = require( "fs" ),
-      // IMPORTANT: you must run `npm install` in the directory for this assignment
-      // to install the mime library if you"re testing this on your local machine.
-      // However, Glitch will install it automatically by looking in your package.json
-      // file.
-      mime = require( "mime" ),
-      dir  = "public/",
-      port = 3000
+const express = require("express");
+const mime = require("mime");
+const path = require("path");
+require("dotenv").config();
 
-const appdata = []
+const passport = require("passport");
+const Auth0Strategy = require("passport-auth0");
+const session = require("express-session");
 
+const app = express();
+const dir = "public";
 
-const organizeAppData = function() {
-  const currentTime = new Date(); 
+app.use('/bootstrap', express.static(path.join(__dirname, 'node_modules/bootstrap/dist')));
 
-  appdata.sort((a, b) => {
-    // Convert time_input strings to Date objects for comparison
-    const timeA = new Date(`1970-01-01T${a.time_input}:00Z`);
-    const timeB = new Date(`1970-01-01T${b.time_input}:00Z`);
+app.use(session({
+  secret: "secret-key",
+  resave: false,     // don't resave if session unchanged
+  saveUninitialized: true   // save new but unmodified sessions
+}));
 
-    // Calculate differences from current time
-    const diffA = Math.abs(currentTime - timeA);
-    const diffB = Math.abs(currentTime - timeB);
+app.use(passport.initialize());   
+// integrates Express sessions so passport can persist login state
+app.use(passport.session());  
 
-    return diffB - diffA; // Sort in descending order 
+passport.use(new Auth0Strategy(
+  {
+    domain: process.env.AUTH0_DOMAIN,
+    clientID: process.env.AUTH0_CLIENT_ID,
+    clientSecret: process.env.AUTH0_CLIENT_SECRET,
+    callbackURL: "https://a3-johndiamond.vercel.app/callback"
+  },
+  // Runs after login succeeds and saves user object in session
+  function(accessToken, refreshToken, extraParams, profile, done){
+    return done(null, profile);
+  }
+));
+
+// serialize user into session, store entire user profile
+passport.serializeUser((user, done) => {
+  done(null, user);
+});
+
+// deserialize User object on each request
+passport.deserializeUser((user, done) => {
+  done(null, user);
+});
+
+// Redirect to Auth0 hosted login page
+app.get("/login", passport.authenticate("auth0", {
+  scope: "openid"
+}));
+
+// Auth0 redirects after login
+app.get("/callback", passport.authenticate("auth0", {
+  failureRedirect: "/index" // Redirect back to login page if fails
+}), (req, res) => {
+  res.redirect("/user");
+});
+
+// Redirect to login page after logout
+app.get("/logout", (req, res) => {
+  req.logout(() => {
+    req.session.destroy(() => {
+      res.redirect(
+      `https://${process.env.AUTH0_DOMAIN}/v2/logout?client_id=${process.env.AUTH0_CLIENT_ID}&returnTo=https://a3-johndiamond.vercel.app/`
+      );
+    });
   });
+});
 
-};
+// Protection middleware to make sure user is logged in
+function requireLogin(req, res, next) {
+  if (req.isAuthenticated()){
+    return next();
+  }
+  else{
+      res.redirect("/login");
+  }
+}
 
-const determinePriority = function(){ 
+// Middleware to parse JSON bodies 
+app.use(express.json());
+// Middleware to serve static files from folder
+app.use(express.static(dir));
+
+
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
+const uri = `mongodb+srv://${process.env.USERNM}:${process.env.PASS}@${process.env.HOST}/?retryWrites=true&w=majority&appName=a3-johndiamond`;
+
+// Create a MongoClient with a MongoClientOptions object to set the Stable API version
+const client = new MongoClient(uri, {
+  serverApi: {
+    version: ServerApiVersion.v1,
+    strict: true,
+    deprecationErrors: true,
+  }
+});
+
+let collection = null
+async function run() {
+  try {
+    console.log(uri);
+    // Connect the client to the server	(optional starting in v4.7)
+    await client.connect();
+
+    collection = client.db("a3-database").collection("a3-collection");
+
+    if(collection !== null){
+      console.log("Collection exists");
+    }
+    // Send a ping to confirm a successful connection
+    await client.db("a3-database").command({ ping: 1 });
+    console.log("Pinged your deployment. You successfully connected to MongoDB!");
+
+  } catch (err) {
+    // Ensures that the client will close when you finish/error
+    console.error("MongoDB connection error:", err);
+  }
+}
+run().catch(console.dir);
+
+app.use((req, res, next) => {
+  if (collection !== null){
+    next();
+  } else {
+    res.status(503).send("Collection does not exists");
+  }
+});
+
+
+const determinePriority = function(tasks){ 
   const currentTime = new Date(`1970-01-01T${new Date().toTimeString().split(' ')[0]}Z`);
 
-  for (let i = 0; i < appdata.length; i++) {
-    const taskTime = new Date(`1970-01-01T${appdata[i].time_input}:00Z`);
+  return tasks.map(task => {
+    const taskTime = new Date(`1970-01-01T${task.time_input}:00Z`);
     const timeDiff = (taskTime - currentTime) / (1000 * 60); // Difference in minutes
 
+    let priority;
     if (timeDiff <= 30 && timeDiff >= 0) {
-      appdata[i].priority = "High";
+      priority = "High";
     } else if (timeDiff > 30 && timeDiff <= 120) {
-      appdata[i].priority = "Medium";
+      priority = "Medium";
     } else if (timeDiff > 120) {
-      appdata[i].priority = "Low";
+      priority = "Low";
+    } else {
+      priority = "Expired";
     }
-    else {
-      appdata[i].priority = "Expired";
-    }
+
+    // return a new object with priority added
+    return { ...task, priority };
+  });
+};
+
+// const ensureNoDuplicates = function(newTask) {
+//   // Check if a task with the same task_input and time_input already exists
+//   return !appdata.some(task => task.task_input === newTask.task_input && task.time_input === newTask.time_input);
+// }
+
+// Convert ids for each task to string for client side
+function convertIdtoString(tasks){
+  return tasks.map(task => ({
+    ...task,
+    id: task._id.toString(),
+  }));
+}
+
+async function getTasksWithPriority(){
+  // fetch tasks sorted by time
+  const tasks = await collection.find({}).sort({ time_input: 1 }).toArray();
+
+  // add priority and convert _id to string
+  const tasksWithPriority = determinePriority(tasks);
+  return convertIdtoString(tasksWithPriority);
+}
+
+
+// Serve login.html automatically
+app.get("/", (req, res) => {
+  res.sendFile(path.join(__dirname, "public", "index.html"));
+});
+
+// Serve index.html if authenticated
+app.get("/user", requireLogin, (req, res) => {
+  res.sendFile(path.join(__dirname, "public", "user.html"));
+});
+
+
+
+// handle "tasks" GET call
+app.get("/tasks", async (req, res) => {
+  try {
+    const tasks = await getTasksWithPriority();
+    res.json(tasks);
+  } catch (err) {
+    res.status(500).send("Error fetching tasks");
   }
-}
+});
 
-const ensureNoDuplicates = function(newTask) {
-  // Check if a task with the same task_input and time_input already exists
-  return !appdata.some(task => task.task_input === newTask.task_input && task.time_input === newTask.time_input);
-}
 
-// Handles HTTP requests and calls coressponding functions
-const server = http.createServer( function( request,response ) {
-  if( request.method === "GET" ) {
-    handleGet( request, response )    
-  }else if( request.method === "POST" ){
-    handlePost( request, response ) 
-  }
-})
+app.post("/submit", async (req, res) => {
+  try {
+    const newTask = req.body;
 
-// Either serves a file or the index page
-const handleGet = function( request, response ) {
-  const filename = dir + request.url.slice( 1 ) 
+    console.log(newTask);
 
-  if( request.url === "/" ) {
-    sendFile( response, "public/index.html" )
-  }
-  else if( request.url === "/tasks" ) {
-    organizeAppData();
-    determinePriority();
-    response.writeHead(200, { "Content-Type": "application/json" });
-    response.end(JSON.stringify(appdata));
-  }else{
-    sendFile( response, filename )
-  }
-}
+    console.log("Collection is:", collection ? "READY" : "NULL");
+    console.log("DB:", collection.dbName, "Collection:", collection.collectionName);
+    
+    // Ensure no duplicates with same task + time
+    const duplicate = await collection.findOne({
+      task_input: newTask.task_input,
+      time_input: newTask.time_input
+    });
 
-//
-const handlePost = function( request, response ) {
-  let dataString = ""
+    console.log(duplicate);
 
-  // receives data in chunks to append to dataString
-  request.on( "data", function( data ) { // event listener triggered when data is received
-      dataString += data 
-  })
-
-  // event listener triggered when all data is received
-  request.on( "end", function() {
-    const parsedData = JSON.parse(dataString);
-
-    if(request.url === "/update-time") {
-
-      const task = appdata.find(t => t.task_id === parsedData.id);
-      if (task) {
-        task.time_input = parsedData.time_input;
-      }
-    }
-    else if (request.url === "/delete-task") {
-      console.log("Deleting task with ID:", parsedData.id);
-      const taskIndex = appdata.findIndex(t => t.task_id === parsedData.id);
-      if (taskIndex !== -1) {
-        appdata.splice(taskIndex, 1); // Remove the task from the array
-      }
-    }
-    else {
-      // Add the new data to the appdata array
-      if (ensureNoDuplicates(parsedData)) {
-        appdata.push(parsedData);
-      }
+    if(!duplicate){
+      const result = await collection.insertOne(newTask);
+      console.log("Inserted task: with _id:", result.insertedId);
     }
 
-    // Re-apply organization and priority after any update
-    organizeAppData();
-    determinePriority();
-
-    // Send the entire appdata array as the response
-    response.writeHead(200, { "Content-Type": "application/json" });
-    response.end(JSON.stringify(appdata));
-  })
-}
+    const tasks = await getTasksWithPriority(collection);
+    res.json(tasks);
+  } catch (err) {
+    res.status(500).send("Error adding task");
+  }
+});
 
 
-const sendFile = function( response, filename ) {
-   const type = mime.getType( filename ) 
+app.post("/update-time", async (req, res) => {
+  try{
+    const { id, time_input } = req.body;
 
-  // read file from file system
-   fs.readFile( filename, function( err, content ) {
+    await collection.updateOne(
+      { _id: new ObjectId(String(id)) },
+      { $set: { time_input } }
+    );
 
-     // if the error = null, then we"ve loaded the file successfully
-     if( err === null ) {
+    const tasks = await getTasksWithPriority();
+    res.json(tasks);
+  } catch (err) {
+    res.status(500).send("Error updating task");
+  }
+});
 
-       // status code: https://httpstatuses.com
-       response.writeHeader( 200, { "Content-Type": type })
-       response.end( content )
+  
+app.post("/delete-task", async (req, res) => {
+  try {
+    const { id } = req.body;
 
-     }else{
+    await collection.deleteOne({ _id: new ObjectId(String(id)) });
 
-       // file not found, error code 404
-       response.writeHeader( 404 )
-       response.end( "404 Error: File Not Found" )
+    const tasks = await getTasksWithPriority();
+    res.json(tasks);
+  } catch (err) {
+    res.status(500).send("Error deleting task");
+  }
+});
 
-     }
-   })
-}
 
-server.listen( process.env.PORT || port )
+port = process.env.PORT || 3000;
+
+app.listen( port, () => {
+  console.log(`Server running on port: ${port}`);
+});

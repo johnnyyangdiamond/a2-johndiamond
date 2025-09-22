@@ -1,106 +1,55 @@
-h1 {
-  text-align: center;
-  font-size: 50px;
-  font-family: "IBM Plex Sans", sans-serif;
+td[contenteditable="true"]:hover {
+  background-color: rgba(72, 77, 80, 0.428); 
+  cursor: text; /* makes it clear that it’s editable */
 }
 
 body {
   background: black;
   color: white;
-}
-
-
-p {
-    font-family: "IBM Plex Sans", sans-serif;
-}
-
-button {
-    font-family: "IBM Plex Sans", sans-serif;
-}
-
-input{
-    font-family: "IBM Plex Sans", sans-serif;
-}
-
-
-#form-description {
-  text-align: center;
-  font-size: medium;
-}
-
-#task-form {
-  display: grid;
-  justify-content: center;
-  gap: 10px;
-  margin-bottom: 40px;
-  grid-template-columns: 20% 10% 10%;
-}
-
-
-#task-list {
-  gap: 10px;
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-
-.task-table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-.task-header {
-  border: 1px solid white;
-  padding: 10px;
-  background-color: #444;
-  text-align: center;
   font-family: "IBM Plex Sans", sans-serif;
 }
 
-.task-cell {
+/* Headings and paragraphs inherit font */
+h1, p, button, input {
   font-family: "IBM Plex Sans", sans-serif;
-  border: 1px solid white;
-  padding: 10px;
-  text-align: center;
-  position: relative;
 }
 
-.task-row {
-  position: relative;
+#logout {
+  font-family: "IBM Plex Sans", sans-serif;
+  position: absolute;
+  right: 15px;
+  top: 20px;
 }
 
-.task-row:hover .delete-button {
-  display: inline-block;
+#addTask{
+  border-color: rgb(218, 218, 218);
+  background-color: white;
+}
+
+/* Priority colors */
+.high-priority {
+  background-color: rgb(58, 52, 41) !important;
+  color: black !important;
+}
+.medium-priority {
+  background-color: yellow !important;
+  color: black !important;
+}
+.low-priority {
+  background-color: green !important;
+  color: black !important;
+}
+.expired-priority {
+  background-color: red !important;
+  color: black !important;
 }
 
 .delete-button {
-  font-family: "IBM Plex Sans", sans-serif;
-  display: none;
+  display: none !important; /* hidden by default */
   position: absolute;
   right: 10px;
-  top: 50%;
-  transform: translateY(-50%);
-  background-color: red;
-  color: white;
-  border: 2px solid black;
-  padding: 5px 10px;
-  cursor: pointer;
-  border-radius: 5px;
 }
 
-.high-priority {
-  background-color: orange;
-  color: black;
-}
-.medium-priority {
-  background-color: yellow;
-  color: black;
-}
-.low-priority {
-  background-color: green;
-  color: black;
-}
-.expired-priority {
-  background-color: red;
-  color: black;
+.task-row:hover .delete-button {
+  display: inline-block !important; /* show on hover */
 }

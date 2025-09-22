@@ -80,3 +80,63 @@ Used ChatGPT with the following prompts:
 - how to create a function to submit a post request to a server
 - how to add an id to an element like classList.add
 - How to create a button that only appears when hovering over an element
+
+
+
+
+
+1. Help users avoid and correct mistakes - Tips for Developing 
+
+When a user edits the time for an existing task, my application ensures the time is in the actual range and alerts the user if not (ex: 46:88 is not a valid time).
+
+2. Provide informative, unique page titles - Tips for Writing
+
+The page title for the login page is called "Login" and the title for the daily task page is "Daily Task Page".
+
+3. Keep content clear and concise - Tips for Writing
+
+The daily tasks page has three sentences to explain to the user how to use the application.
+
+4. Provide sufficient contrast between foreground and background - Tips for Designing
+
+The colors of the text versus the background they are displayed on are adequately contrasted to be able to read the text clearly.
+
+5. Ensure that interactive elements are easy to identify - Tips for Designing
+
+When you hover over task and time cells, they turn gray. Also, when you click on the text in either a task or time cell, there is a blue outline that appears on that cell. When you hover over any row in the table, a delete button for that button appears
+
+6. Ensure that form elements include clearly associated labels - Tips for Designing
+
+The text box to input the name of tasks has placeholder text "Task Name" and the time input form has the text "--:-- --" as well as a clock icon.
+
+7. Provide easily identifiable feedback - Tips for Designing
+
+If the user tries to click "Add Task" without filling out task name and task time, the browser will alert with the text: "Both Task Name and Time are required."
+
+8. Reflect the reading order in the code order - Tips for Developing
+
+The elements are in top to bottom order for a user to read. First the heading, then the explanation of the application, then the form input, and then the table to display the contents of the submitted forms.
+
+9. Provide clear instructions - Tips for Writing
+
+The text below the header effectively explain to the user how to application works as well as error explanations if a user does not use the application correctly.
+
+10. Keep content clear and concise - Tips for Writing 
+
+The text and interactive elements are minimal and formatted with spacing so a user can clearly distinguish between them.
+
+11. Don't use color alone to convey information - Tips for Designing
+
+The priority column has colors as well as text to indicate how close the deadline for each task is: low - green, medium - yellow, high - orange, expired - red.
+
+12. Provide clear and consistent navigation options - Tips for Designing
+
+The login button has the text "Login with Email/Password" and has an icon of an arrow entering a box. The logout button has the text "Logout" and has an icon of an arrow exiting a box.
+
+
+
+CRAP Principles 
+
+Contrast
+
+My application uses 
