@@ -28,7 +28,7 @@ h1, p, button, input {
 
 /* Priority colors */
 .high-priority {
-  background-color: rgb(58, 52, 41) !important;
+  background-color: rgb(255, 119, 0) !important;
   color: black !important;
 }
 .medium-priority {

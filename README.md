@@ -1,45 +1,31 @@
 John Diamond 
-https://a2-johndiamond.onrender.com
+https://a3-johndiamond-production.up.railway.app/
 
-**Note**: Render service is hosting in Oregon so the Priority field will be off by a few hours.
+
+**Note**: Railway service is hosting in Oregon so the Priority field will be off by a few hours.
+
+**Login Information**
+- Email: user@gmail.com
+- Password: aa3Bas882J
 
 This project allows users to enter tasks with a specifed times which will be displayed on the page in a list format in order of how close the time is to the current time. Users can also edit and delete specific tasks.
 
-Baseline Requirements
----
+One of the biggest challenges with this application was converting it to use MongoDB as the UI for setting up databases and collections was confusing as well as refactoring my code to work with the API calls.
+
+I choose Auth0 for my authentication strategy so I could get the Technical Achievement.
+
+I used the CSS framework Bootstrap because it was the most generalized and popular framework.
+
+Express Middleware:
+- express.json(): parse JSON request bodes
+- express.static(dir): Serve static files from 'public' directory
+- express-session: handles login state between requests
+- passport: integrates Auth0 authentication and ties it into session
+- requireLogin(): custom function, ensures that user is authenticated before going to rest of code such as connecting to MongoDB
+- custom function that makes sure collection exists before proceeding with code to call collection functions
 
 
-- `Server`: maintains a tabular dataset with fields.**task_input**, **time_input**, **task_id**, and **priority**.
-- `Results`: this inputted tasks with the information **Task Name**, **Time**, and **Priority** are displayed in a table format on the page.
-- `Form/Entry`: Users input the task name and time and click the 'Add Task' button to display the information on the table. 
-- `Server Logic`: After receiving the task name and time from the user, the server calculates the **priority** field based on how close the task is to the current time as well as sorts them in ascending order based on time.
-- `Derived field`: the field **priority** is calculated based on how close the task is to the current time with options **Low**, **Medium**, **High**, and **Expired**.
 
-
-HTML Requirements:
----
-
-- Users specify the task through `<input>` elements, one of type **text** and one of type **time**. The user then submits the task by clicking the `<button>` element 'Add Task'.
-- The results are displayed in a `<table>` element with a `<th>` (table header) specifying columns **Task Name**, **Time**, and **Priority**. All tasks specified by users appear as `<tr>` (table rows) in the table.
-- The pages is [validated](https://validator.w3.org)
-
-CSS Requirements:
----
-
-- CSS Selector styling:
-    - Element selectors - `h1`, `body`, `button`
-    - ID selectors - `#task-form`, `#form-description`, `#task-list`
-    - Class selectors - `.task-table`, `.task-header`, 
-- CSS positioning and styling of the primary visual elements in the application:
-    - Use of either a CSS grid for layout - `#task-form`
-    - Font used for all text - IBM Plex Sans
-- CSS defined `main.css` 
-
-JavaScript:
-- `main.js` submits POST requests to the server `server.improved.js` whenever a user submits a new task, edits the time of an existing class, or deletes a task to update changes to the data stored in the server. It also submits a GET request every minute to update the **Priority** column of each task.
-
-Node.js:
-- The server `server.improved.js` calculates the priority of each task every minute, organizes the tasks in ascending order, and also ensures there are no duplicate tasks with the same name and time.
 
 
 Acheivements
@@ -47,43 +33,18 @@ Acheivements
 
 
 *Technical*
-- As stated above, users can input a task name and task time to be displayed in a table below with a column called `Priority` calculated during runtime. If a user modifies the time, the page will automatically update the order of the tasks displayed in ascending order as well as the Priority of that specifc task. The page is updated every minute so update the Priority column as tasks get closer to their deadline.
 
-- The User can modify the task name and task time by simply clicking on the text of either and modifying it directly. Users can not edit the priority because it is updated automatically if the time of the task is modified. Additionally, if the user hovers over a row in the table, a delete button pops up on the right hand side of that specifc row which a user can click on to delete the task.
+I implemented OAuth authentication with passport.js.
+- Email: user@gmail.com 
+- Password: aa3Bas882J
+
+I used Railway instead of Render. I felt that the UI was more straight forward and I didn't have to configure the environment as much.
+
 
 *Design/UX*
 
-Design Evaluation 1:
-1. Theo Sawyer
-2. There is nothing on the page that indicates you can edit the values  in each task
-3. I should use AM and PM instead of military time
-4. Add more elements to guide the user on how to use the application
-
-Design Evaluation 2:
-1. Aanan Goyal
-2. The table headers should be present on the page even if there are no tasks under
-3. He typed in an extremely long task which modified the length of the columns in the table that I did not expect.
-4. Modify the table headers so they appear even if no tasks have been entered
-
-
-AI Usage
----
-
-Used ChatGPT with the following prompts:
-- How to add `<li>` components to an HTML page dynamically after a button is clicked
-- How to create a javascript function called when a user edits content in a table element
-- How would I add a new category to the JSON on the server side?
-- How would I use grid on the table to make one column longer than the others?
-- How would I make the text in the table editable?
-- How would I create a regex experssion to make sure a user enters time in format HH:MM
-- How to add an event listener to a speciifc column in a table
-- how to create a function to submit a post request to a server
-- how to add an id to an element like classList.add
-- How to create a button that only appears when hovering over an element
-
-
-
-
+Twelve Tips:
+___
 
 1. Help users avoid and correct mistakes - Tips for Developing 
 
@@ -134,9 +95,48 @@ The priority column has colors as well as text to indicate how close the deadlin
 The login button has the text "Login with Email/Password" and has an icon of an arrow entering a box. The logout button has the text "Logout" and has an icon of an arrow exiting a box.
 
 
-
 CRAP Principles 
+___
+
 
 Contrast
 
-My application uses 
+Contrast in my site is primarily achieved through color. The background color of the page is white but the table is primarily black. Text contrast is also used with text either being black of white to contrast the background color and make it easily readable. The table of tasks leverages contrast as well, with high, medium, low, and expired tasks each highlighted in distinct background colors (orange, yellow, green, and red). This allows users to quickly differentiate the priority level of each task. Additionally, hovering over cells in “Task Name” and “Time” turns the background color gray in contrast to black to indicate that they can be edited. Finally, if you click on the text in one of the cells, the outline turns blue in contrast to no outline to indicate that the current cell is being edited.
+
+Repetition
+
+The blue of the Login and Logout buttons as well as the icons are repeated to ensure the user knows these are navigation buttons. The font throughout the application is repeated using 'IBM Plex Sans' to give it a sleek and modern look. The form inputs and button all have a white background with a light gray outline to indicate to the user that they are all within the same function of submitting a task into the table. Additionally, all rows in the table have the same functions of making a delete button visible when a user hovers over the row and making the background color of the cells turn gray when hovered, ensuring that the user is aware of the functionality of the various row within the table. Morevover, the functionality of each row is repeated in the table of being able to edit the task name and time cells as well as delete any row when needed.
+
+Alignment
+
+The main page text and buttons are all aligned to the center for consistency besides the logout button which is off to the side to indicate that it is not part of the main function of the application. Additionally, the table aligns 'Task Name', 'Time', and 'Priorty' into columns so users can easily track each row and category. The 'Task Name' column is wider than the others so users have more space to type out longer tasks. The form input for task name, task time, and add task button are all in the same row to indicate that they work together. The login page has the header 'Daily Tasks' with a large Login button aligned in the center so the user's attention is front and center. Finally, the text on the main page is aligned for the user to understand how the application works by reading it top to bottom.
+
+Proximity
+
+On the login page there is a white box in the center with the header "Daily Tasks" and a blue button right below with the text "Login with Email/Password". This lets the user know that if they click the button they will be directed to another page with Daily Tasks. On the main page the header is repeated with additional text right below that explains how to use the application. Right below that is a form input for text, time, and a button 'Add Task'. Since it is right below text explaining how to use the application, the user knows that this must be the form submission that was explained just above.
+
+
+AI Usage
+---
+
+Used ChatGPT with the following prompts:
+- What is the express version of the sendFile function
+- How do I figure out this information on my mongoDB database? USERNM=xxxxx PASS=xxxxx HOST="cluster0-xxxxxxxx.mongodb.net"
+- Error: querySrv ENOTFOUND _mongodb._tcp.undefined …
+- What does run().catch(console.dir) do
+- SyntaxError: Unexpected token 'E', "Error adding task" is not valid JSON
+- What data type is duplicate in: const duplicate = await collection.findOne({ task_input: newTask.task_input, time_input: newTask.time_input });
+- Error running findOne: MongoServerError: (Unauthorized) not authorized on admin to execute command
+- Atlas restricts write access to collections on certain namespaces that are used by MongoDB itself. Included restricted a3-collection on role: readWrite@admin
+- Why does this get request not work: app.get("/index", (req,res) => { res.sendFile(path.join(__dirname, "public/html", "index.html")); }) when I do window.location.href = "/index";
+- I just tried to deploy my application on vercel but I got 404 not found when tried to login to auth0
+- Can you wrap duplicate in a try catch statement?
+
+
+
+
+
+
+
+
+
